@@ -1,43 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Javascript Calculator - developermithu</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="js/index.js" defer></script>
-  </head>
-  <body>
-    <div id="calculator">
-      <input type="text" id="display" disabled />
-      <br />
-      <button id="ac" class="operator">AC</button>
-      <button id="de" class="operator">DE</button>
-      <button id="." class="operator">.</button>
-      <button id="/" class="operator">/</button>
-      <br />
-      <button id="7">7</button>
-      <button id="8">8</button>
-      <button id="9">9</button>
-      <button id="*" class="operator">*</button>
-      <br />
-      <button id="4">4</button>
-      <button id="5">5</button>
-      <button id="6">6</button>
-      <button id="-" class="operator">-</button>
-      <br />
-      <button id="1">1</button>
-      <button id="2">2</button>
-      <button id="3">3</button>
-      <button id="+" class="operator">+</button>
-      <br />
- 
-      <button id="00">00</button>
-      <button id="0">0</button>
-      <button id="=" class="equal operator">=</button>
-      <br />
-    </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    :root {
+      --bg-color: #ffffff; /* Warna latar belakang terang */
+      --text-color: #000000; /* Warna teks terang */
+      --button-bg: #f0f0f0; /* Warna latar belakang tombol terang */
+      --button-text: #000000; /* Warna teks tombol terang */
+      --button-hover: #dddddd; /* Warna latar belakang tombol saat hover */
+    }
 
-  </body>
+    [data-theme="dark"] {
+      --bg-color: #1e1e1e; /* Warna latar belakang gelap */
+      --text-color: #ffffff; /* Warna teks gelap */
+      --button-bg: #007BFF; /* Warna latar belakang tombol biru */
+      --button-text: #ffffff; /* Warna teks tombol biru */
+      --button-hover: #0056b3; /* Warna latar belakang tombol biru saat hover */
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .calculator {
+      width: 300px;
+      border: 1px solid var(--button-hover);
+      border-radius: 10px;
+      padding: 20px;
+      background-color: var(--bg-color);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .display {
+      width: 100%;
+      height: 50px;
+      margin-bottom: 10px;
+      background-color: var(--button-bg);
+      color: var(--text-color);
+      font-size: 1.5em;
+      border: none;
+      border-radius: 10px;
+      text-align: right;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--button-hover);
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator" data-theme="light">
+    <input type="text" class="display" id="display" disabled>
+    <div class="buttons">
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button onclick="clearDisplay()">AC</button>
+      
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button onclick="appendValue('/')">/</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button onclick="appendValue('*')">*</button>
+
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>
+      <button onclick="deleteLast()">←</button>
+      <button onclick="appendValue('-')">-</button>
+
+      <button onclick="appendValue('+')">+</button>
+      <button onclick="calculateResult()" style="grid-column: span 2;">=</button>
+      <button onclick="toggleTheme()">☀️/🌙</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    const calculator = document.querySelector('.calculator');
+
+    function appendValue(value) {
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function deleteLast() {
+      display.value = display
+      .value.slice(0, -1);
+    }
+
+    function calculateResult() {
+      try {
+        display.value = eval(display.value) || '';
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    function toggleTheme() {
+      const currentTheme = calculator.getAttribute('data-theme');
+      calculator.setAttribute('data-theme', currentTheme === 'light' ? 'dark' : 'light');
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if ((event.key >= '0' && event.key <= '9') || ['+', '-', '*', '/', '.'].includes(event.key)) {
+        appendValue(event.key);
+      } else if (event.key === 'Enter') {
+        calculateResult();
+      } else if (event.key === 'Backspace') {
+        deleteLast();
+      } else if (event.key === 'Escape') {
+        clearDisplay();
+      }
+    });
+  </script>
+</body>
 </html>
